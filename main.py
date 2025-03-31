@@ -13,7 +13,8 @@ from core.middlewares.user_control import UserControlMiddleware
 from core.texts.commands import commands
 from services.db.db_pool import create_db_pool
 from core.handlers.admin import admin_router
-
+from services.db.mock import load_data
+from services.db.storage import Storage
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,9 @@ async def main():
     dp.include_router(user_router)
 
     await set_commands(bot, commands)
+
+    store = Storage(db_pool())
+    await load_data(store)
 
     try:
         await dp.start_polling(bot, allowed_updates=["any"])

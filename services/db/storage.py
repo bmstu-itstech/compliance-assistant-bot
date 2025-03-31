@@ -2,6 +2,7 @@ import logging
 
 from sqlalchemy import select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import lazyload
 
 from core import domain
 from services.db import models
@@ -21,53 +22,45 @@ class Storage:
     def __init__(self, conn: AsyncSession):
         self._db = conn
 
-    async def create_user(self, user: domain.User) -> domain.User:
-        new_user = models.User.from_domain(user)
-        self._db.add(new_user)
+    async def create_theme(self, theme: domain.ThemeRecord):
+        new_theme = models.Theme.from_domain(theme)
+        self._db.add(new_theme)
         await self._db.commit()
-        logger.info(f"add user with id {new_user.id}")
-        return new_user
+        logger.info(f"add theme with id {theme.id}")
 
-    async def user(self, _id: int) -> domain.User | None:
-        stmt = select(models.User).filter_by(id=_id)
-        result = await self._db.execute(stmt)
-        model = result.scalar_one_or_none()
-        if not model:
-            raise UserNotFoundException(_id)
-        return model.to_domain()
+    async def create_material(self, material: domain.MaterialRecord):
+        new_material = models.Material.from_domain(material)
+        self._db.add(material)
+        await self._db.commit()
+        logger.info(f"add material with id {material.id}")
 
-    async def users_by(self, count: int = 1, **filters) -> None | domain.User | list[domain.User]:
-        """
-        Returns all users that match the given filters.
-        :param count: -1 if you want all users
-        :param filters:
-        :return:
-        """
-        stmt = select(models.User)
+    # async def user(self, _id: int) -> domain.User | None:
+    #     stmt = select(models.User).filter_by(id=_id)
+    #     result = await self._db.execute(stmt)
+    #     model = result.scalar_one_or_none()
+    #     if not model:
+    #         raise UserNotFoundException(_id)
+    #     return model.to_domain()
+
+    async def materials(self, **filters) -> None | list[domain.MaterialRecord]:
+        stmt = select(models.Material)
         for key, value in filters.items():
-            if hasattr(models.User, key):
-                stmt = stmt.filter(getattr(models.User, key) == value)
-            else:
-                raise ValueError(f"Invalid filter: {key}")
-        if count != -1:
-            stmt = stmt.limit(count)
-        result = await self._db.execute(stmt)
-        users = result.scalars().all()
-        if count == 1 and users:
-            return users[0].to_domain()
-        return [user.to_domain() for user in users]
-
-    async def amount_users_by(self, **filters) -> int:
-        stmt = select(func.count(models.User.id))
-        for key, value in filters.items():
-            if hasattr(models.User, key):
-                stmt = stmt.filter(getattr(models.User, key) == value)
+            if hasattr(models.Material, key):
+                stmt = stmt.filter(getattr(models.Material, key) == value)
             else:
                 raise ValueError(f"Invalid filter: {key}")
         result = await self._db.execute(stmt)
-        return result.scalar_one()
+        materials = result.scalars().all()
+        return [material.to_domain() for material in materials]
 
-    async def update_user(self, user_id: int, **kwargs) -> None:
-        stmt = update(models.User).filter_by(id=user_id).values(**kwargs)
-        await self._db.execute(stmt)
-        await self._db.commit()
+    async def themes_by_partial_title(self, name: str) -> list[domain.ThemeRecord]:
+        res = await self._db.execute(
+            select(models.Theme).options(lazyload(models.Theme.materials)).where(models.Theme.name.contains(name))
+        )
+        themes = res.scalars().all()
+        return [theme.to_domain() for theme in themes]
+
+    # async def update_user(self, user_id: int, **kwargs) -> None:
+    #     stmt = update(models.User).filter_by(id=user_id).values(**kwargs)
+    #     await self._db.execute(stmt)
+    #     await self._db.commit()

@@ -27,21 +27,7 @@ class UserControlMiddleware(BaseMiddleware):
         else:
             return
 
-        store: Storage = data["store"]
-
-        try:
-            user = await store.user(this_user.id)
-        except UserNotFoundException:
-            user = await store.create_user(
-                domain.User(
-                    id=this_user.id,
-                    username=this_user.username,
-                    is_bot_blocked=False,
-                    role=role_mapper(this_user),
-                )
-            )
-        data["user"] = user
-        data["role"] = user.role
+        data["role"] = role_mapper(this_user)
         return await handler(event, data)
 
 
