@@ -11,9 +11,10 @@ from core.handlers.user import user_router
 from core.middlewares.db import DbMiddleware
 from core.middlewares.user_control import UserControlMiddleware
 from core.texts.commands import commands
+from services.db.data_loader import DataLoader
 from services.db.db_pool import create_db_pool
 from core.handlers.admin import admin_router
-from services.db.mock import load_data
+from services.db.mock_data import MOCK_THEMES, MOCK_MATERIALS
 from services.db.storage import Storage
 
 logger = logging.getLogger(__name__)
@@ -62,8 +63,13 @@ async def main():
 
     await set_commands(bot, commands)
 
-    store = Storage(db_pool())
-    await load_data(store)
+    async with db_pool() as db:
+        store = Storage(db)
+        loader = DataLoader(store)
+        # try:
+        await loader.load_all(MOCK_THEMES, MOCK_MATERIALS)
+        # except Exception as e:
+        #     logger.error(f"Fatal error during data loading: {str(e)}")
 
     try:
         await dp.start_polling(bot, allowed_updates=["any"])

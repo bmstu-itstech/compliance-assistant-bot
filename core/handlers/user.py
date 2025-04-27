@@ -93,15 +93,28 @@ async def handle_search_format(call: CallbackQuery, store: Storage, state: FSMCo
     if search_format == "custom":
         await send_theme_choose(call)
         await state.set_state(HandleUser.theme)
+        await state.update_data(message_to_update=call.message)
 
 
 async def send_themes(message, state, store, partial_name: str = None):
     data = await state.get_data()
     materials = await store.materials(codex=data["codex"], material_type=data["material_type"])
     if partial_name:
-        themes = list({material.theme for material in materials if partial_name in material.theme.name})
+        themes = list({
+            (theme.id, theme.name)
+            for material in materials
+            for theme in await store.themes_by_material(material.id)
+            if partial_name in theme.name
+        })
     else:
-        themes = list({material.theme for material in materials})
+        themes = list({
+            (theme.id, theme.name)
+            for material in materials
+            for theme in await store.themes_by_material(material.id)
+        })
+    if not themes:
+        await message.edit_text(texts.messages.no_themes)
+        return
     await message.edit_text(texts.messages.list_themes, reply_markup=get_themes_keyboard(themes))
 
 
@@ -110,5 +123,58 @@ async def send_theme_choose(call):
 
 
 @user_router.message(HandleUser.theme)
-async def handle_theme(message: Message, store: Storage, state: FSMContext):
-    await send_themes(message, state, store, message.text)
+async def handle_input_theme(message: Message, store: Storage, state: FSMContext):
+    await message.delete()
+    data = await state.get_data()
+    await send_themes(data["message_to_update"], state, store, message.text)
+
+
+F: CallbackQuery
+
+
+@user_router.callback_query(F.data.startswith("theme"))
+async def handle_chosen_theme(call: CallbackQuery, store: Storage):
+    await call.answer()
+    theme_id = int(call.data.split("_")[-1])
+    materials = await store.materials_by_theme(theme_id)
+    await send_materials(call, materials)
+
+
+async def send_materials(call, materials):
+    await call.message.edit_text(texts.messages.list_materials, reply_markup=get_materials_keyboard(materials))
+
+
+@user_router.callback_query(F.data.startswith("material"))
+async def handle_material(call: CallbackQuery, store: Storage, state: FSMContext):
+    await call.answer()
+    material_id = int(call.data.split("_")[-1])
+    materials = await store.materials(id=material_id)
+    material = materials[0]
+    await send_material(call, material)
+
+
+async def send_material(call, material):
+    await call.message.answer(
+        f"<i><b>\"{material.name}\"</b></i> "
+        f"({map_codex_to_str(material.codex)} кодекс) - {map_material_type_to_str(material.material_type)}\n\n"
+        f"<i>{material.description}</i>\n\n"
+        f"{material.content}"
+    )
+
+
+def map_material_type_to_str(material_type: domain.MaterialType) -> str:
+    if material_type == domain.MaterialType.LAW:
+        return "закон"
+    elif material_type == domain.MaterialType.JUDICIAL_PRACTICE:
+        return "судебная практика"
+    elif material_type == domain.MaterialType.CASE:
+        return "кейс"
+    elif material_type == domain.MaterialType.ADVICE:
+        return "совет"
+
+
+def map_codex_to_str(codex: domain.Codex) -> str:
+    if codex == domain.Codex.LABOR:
+        return "Трудовой"
+    elif codex == domain.Codex.TAX:
+        return "Налоговый"

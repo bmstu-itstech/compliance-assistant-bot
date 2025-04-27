@@ -42,7 +42,6 @@ class Material(BaseModel):
             description=self.description,
             codex=self.codex,
             material_type=self.material_type,
-            themes=[theme.to_domain() for theme in self.themes],
             content=self.content,
         )
 
@@ -61,8 +60,6 @@ class Theme(BaseModel):
         return domain.ThemeRecord(
             id=self.id,
             name=self.name,
-            materials=[],
-            # materials=[material.to_domain() for material in self.materials],
         )
 
 

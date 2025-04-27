@@ -8,7 +8,6 @@ from core import domain
 class ThemeRecord:
     id: int | None
     name: str
-    materials: list["MaterialRecord"] | None
 
 
 class MaterialType(str, Enum):
@@ -24,6 +23,5 @@ class MaterialRecord:
     name: str
     codex: domain.Codex
     material_type: MaterialType
-    themes: list["ThemeRecord"]
     content: str
     description: str | None = None

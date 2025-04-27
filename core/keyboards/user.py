@@ -69,15 +69,33 @@ def get_search_format_keyboard() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def get_themes_keyboard(themes: list[domain.ThemeRecord]) -> InlineKeyboardMarkup:
+def get_themes_keyboard(themes: list[tuple[int, str]], offset: int = 0) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     buttons = [
-        InlineKeyboardButton(text=theme.name, callback_data=f"theme_{theme.id}")
-        for theme in themes
+        InlineKeyboardButton(text=theme[1], callback_data=f"theme_{theme[0]}")
+        for theme in themes[offset:offset + 10]
     ]
     builder.add(*buttons)
-    sizes = [10] * (len(themes) // 10) + [len(themes) % 10]
+    sizes = [1] * len(themes)
     if len(themes) > 10:
+        builder.add(
+            InlineKeyboardButton(text="⬅️Предыдущая", callback_data="prev"),
+            InlineKeyboardButton(text="Следующая➡️", callback_data="next"),
+        )
+        sizes.append(2)
+    builder.adjust(*sizes)
+    return builder.as_markup()
+
+
+def get_materials_keyboard(materials: list[domain.MaterialRecord], offset: int = 0) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    buttons = [
+        InlineKeyboardButton(text=material.name, callback_data=f"material_{material.id}")
+        for material in materials[offset:offset + 10]
+    ]
+    builder.add(*buttons)
+    sizes = [1] * len(materials)
+    if len(materials) > 10:
         builder.add(
             InlineKeyboardButton(text="⬅️Предыдущая", callback_data="prev"),
             InlineKeyboardButton(text="Следующая➡️", callback_data="next"),
