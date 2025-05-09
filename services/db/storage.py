@@ -78,6 +78,13 @@ class Storage:
         themes = res.scalars().all()
         return [theme.to_domain() for theme in themes]
 
+    async def theme_by_id(self, theme_id: int) -> domain.ThemeRecord:
+        res = await self._db.execute(
+            select(models.Theme).where(models.Theme.id == theme_id)
+        )
+        theme = res.scalars().first()
+        return theme.to_domain()
+
     # async def update_user(self, user_id: int, **kwargs) -> None:
     #     stmt = update(models.User).filter_by(id=user_id).values(**kwargs)
     #     await self._db.execute(stmt)

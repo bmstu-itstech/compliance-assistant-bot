@@ -52,9 +52,10 @@ def get_material_types_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="Судебные практики", callback_data=f"material_type_{domain.MaterialType.JUDICIAL_PRACTICE}"),
         InlineKeyboardButton(text="Кейсы", callback_data=f"material_type_{domain.MaterialType.CASE}"),
         InlineKeyboardButton(text="Советы", callback_data=f"material_type_{domain.MaterialType.ADVICE}"),
+        InlineKeyboardButton(text="Назад", callback_data="back"),
     ]
     builder.add(*buttons)
-    builder.adjust(2, 2)
+    builder.adjust(2, 2, 1)
     return builder.as_markup()
 
 
@@ -63,6 +64,7 @@ def get_search_format_keyboard() -> InlineKeyboardMarkup:
     buttons = [
         InlineKeyboardButton(text="Из существующих", callback_data="search_format_exist"),
         InlineKeyboardButton(text="Ручной ввод", callback_data="search_format_custom"),
+        InlineKeyboardButton(text="Назад", callback_data="back"),
     ]
     builder.max_width = 1
     builder.add(*buttons)
@@ -83,6 +85,10 @@ def get_themes_keyboard(themes: list[tuple[int, str]], offset: int = 0) -> Inlin
             InlineKeyboardButton(text="Следующая➡️", callback_data="next"),
         )
         sizes.append(2)
+    builder.add(
+        InlineKeyboardButton(text="Назад", callback_data="back"),
+    )
+    sizes.append(1)
     builder.adjust(*sizes)
     return builder.as_markup()
 
@@ -101,5 +107,9 @@ def get_materials_keyboard(materials: list[domain.MaterialRecord], offset: int =
             InlineKeyboardButton(text="Следующая➡️", callback_data="next"),
         )
         sizes.append(2)
+    builder.add(
+        InlineKeyboardButton(text="Назад", callback_data="back"),
+    )
+    sizes.append(1)
     builder.adjust(*sizes)
     return builder.as_markup()
