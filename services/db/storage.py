@@ -73,7 +73,7 @@ class Storage:
 
     async def themes_by_partial_title(self, name: str) -> list[domain.ThemeRecord]:
         res = await self._db.execute(
-            select(models.Theme).where(models.Theme.name.contains(name))
+            select(models.Theme).where(models.Theme.name.ilike(f"%{name}%"))
         )
         themes = res.scalars().all()
         return [theme.to_domain() for theme in themes]
@@ -85,7 +85,10 @@ class Storage:
         theme = res.scalars().first()
         return theme.to_domain()
 
-    # async def update_user(self, user_id: int, **kwargs) -> None:
-    #     stmt = update(models.User).filter_by(id=user_id).values(**kwargs)
-    #     await self._db.execute(stmt)
-    #     await self._db.commit()
+    async def theme_by_name(self, name: str) -> domain.ThemeRecord | None:
+        res = await self._db.execute(
+            select(models.Theme).where(models.Theme.name == name)
+        )
+        theme = res.scalars().first()
+        if theme is not None:
+            return theme.to_domain()

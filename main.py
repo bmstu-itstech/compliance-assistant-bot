@@ -63,13 +63,13 @@ async def main():
 
     await set_commands(bot, commands)
 
-    async with db_pool() as db:
-        store = Storage(db)
-        loader = DataLoader(store)
-        # try:
-        await loader.load_all(MOCK_THEMES, MOCK_MATERIALS)
-        # except Exception as e:
-        #     logger.error(f"Fatal error during data loading: {str(e)}")
+    # async with db_pool() as db:
+    #     store = Storage(db)
+    #     loader = DataLoader(store)
+    #     try:
+    #         await loader.load_all(MOCK_THEMES, MOCK_MATERIALS)
+    #     except Exception as e:
+    #         logger.error(f"Fatal error during data loading: {str(e)}")
 
     try:
         await dp.start_polling(bot, allowed_updates=["any"])

@@ -105,15 +105,22 @@ async def handle_search_format(call: CallbackQuery, store: Storage, state: FSMCo
         await state.update_data(message_to_update=call.message)
 
 
-async def send_themes(message, state, store, partial_name: str = None):
+async def send_themes(
+        message: Message,
+        state: FSMContext,
+        store,
+        partial_name: str = None,
+        offset: int = 0
+) -> int:
     data = await state.get_data()
     materials = await store.materials(codex=data["codex"], material_type=data["material_type"])
+
     if partial_name:
         themes = list({
             (theme.id, theme.name)
             for material in materials
             for theme in await store.themes_by_material(material.id)
-            if partial_name in theme.name
+            if partial_name.lower() in theme.name.lower()
         })
     else:
         themes = list({
@@ -123,13 +130,40 @@ async def send_themes(message, state, store, partial_name: str = None):
         })
     if not themes:
         await message.edit_text(texts.messages.no_themes)
-        return
+        return 0
+
+    await state.update_data(themes_offset=offset)
+
     await message.edit_text(
         texts.messages.list_themes.format(
             codex=map_codex_to_str(data["codex"]).lower(),
             material_type=map_material_type_to_str(data["material_type"]),
-        ), reply_markup=get_themes_keyboard(themes)
+        ),
+        reply_markup=get_themes_keyboard(themes, offset)
     )
+    return len(themes)
+
+
+@user_router.callback_query(F.data == "prev")
+async def handle_prev_themes(call: CallbackQuery, state: FSMContext, store: Storage):
+    data = await state.get_data()
+    offset = data.get("themes_offset", 0)
+    if offset == 0:
+        await call.answer("Это первая страница!")
+        return
+    new_offset = max(0, offset - 10)
+    await send_themes(call.message, state, store, offset=new_offset)
+    await call.answer()
+
+
+@user_router.callback_query(F.data == "next")
+async def handle_next_themes(call: CallbackQuery, state: FSMContext, store: Storage):
+    data = await state.get_data()
+    offset = data.get("themes_offset", 0)
+    new_offset = offset + 10
+    await state.update_data(themes_offset=new_offset)
+    themes_offset = await send_themes(call.message, state, store, offset=new_offset)
+    await call.answer()
 
 
 async def send_theme_choose(call, state):

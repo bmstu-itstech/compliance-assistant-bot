@@ -1,19 +1,12 @@
+import logging
+
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from core import texts, domain
 
 
-def get_start_keyboard() -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    buttons = [
-        InlineKeyboardButton(text=texts.buttons.button1, callback_data="button1"),
-        InlineKeyboardButton(text=texts.buttons.button2, callback_data="button2"),
-        InlineKeyboardButton(text=texts.buttons.button3, callback_data="button3"),
-    ]
-    builder.add(*buttons)
-    builder.adjust(2, 1)
-    return builder.as_markup()
+logger = logging.getLogger(name=__name__)
 
 
 def get_codexes_keyboard() -> InlineKeyboardMarkup:
@@ -24,24 +17,6 @@ def get_codexes_keyboard() -> InlineKeyboardMarkup:
     ]
     builder.max_width = 1
     builder.add(*buttons)
-    return builder.as_markup()
-
-
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.utils.keyboard import InlineKeyboardBuilder
-
-from core import texts, domain
-
-
-def get_start_keyboard() -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    buttons = [
-        InlineKeyboardButton(text=texts.buttons.button1, callback_data="button1"),
-        InlineKeyboardButton(text=texts.buttons.button2, callback_data="button2"),
-        InlineKeyboardButton(text=texts.buttons.button3, callback_data="button3"),
-    ]
-    builder.add(*buttons)
-    builder.adjust(2, 1)
     return builder.as_markup()
 
 
@@ -78,18 +53,18 @@ def get_themes_keyboard(themes: list[tuple[int, str]], offset: int = 0) -> Inlin
         for theme in themes[offset:offset + 10]
     ]
     builder.add(*buttons)
-    sizes = [1] * len(themes)
+    navigation_buttons = []
     if len(themes) > 10:
-        builder.add(
+        navigation_buttons.extend([
             InlineKeyboardButton(text="⬅️Предыдущая", callback_data="prev"),
             InlineKeyboardButton(text="Следующая➡️", callback_data="next"),
-        )
-        sizes.append(2)
-    builder.add(
-        InlineKeyboardButton(text="Назад", callback_data="back"),
-    )
-    sizes.append(1)
-    builder.adjust(*sizes)
+        ])
+    navigation_buttons.append(InlineKeyboardButton(text="Назад", callback_data="back"))
+    builder.add(*navigation_buttons)
+    if len(themes) > 10:
+        builder.adjust(*([1] * len(buttons) + [2, 1]))
+    else:
+        builder.adjust(*([1] * len(buttons) + [1]))
     return builder.as_markup()
 
 
@@ -100,16 +75,16 @@ def get_materials_keyboard(materials: list[domain.MaterialRecord], offset: int =
         for material in materials[offset:offset + 10]
     ]
     builder.add(*buttons)
-    sizes = [1] * len(materials)
+    navigation_buttons = []
     if len(materials) > 10:
-        builder.add(
-            InlineKeyboardButton(text="⬅️Предыдущая", callback_data="prev"),
-            InlineKeyboardButton(text="Следующая➡️", callback_data="next"),
-        )
-        sizes.append(2)
-    builder.add(
-        InlineKeyboardButton(text="Назад", callback_data="back"),
-    )
-    sizes.append(1)
-    builder.adjust(*sizes)
+        navigation_buttons.extend([
+            InlineKeyboardButton(text="⬅️ Предыдущая", callback_data="prev"),
+            InlineKeyboardButton(text="Следующая ➡️", callback_data="next"),
+        ])
+    navigation_buttons.append(InlineKeyboardButton(text="Назад", callback_data="back"))
+    builder.add(*navigation_buttons)
+    if len(materials) > 10:
+        builder.adjust(*([1] * len(buttons)), 2, 1)
+    else:
+        builder.adjust(*([1] * len(buttons)), 1)
     return builder.as_markup()
