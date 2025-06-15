@@ -24,7 +24,8 @@ def get_material_types_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     buttons = [
         InlineKeyboardButton(text="Законодательство", callback_data=f"material_type_{domain.MaterialType.LAW}"),
-        InlineKeyboardButton(text="Судебные практики", callback_data=f"material_type_{domain.MaterialType.JUDICIAL_PRACTICE}"),
+        #InlineKeyboardButton(text="Судебные практики", callback_data=f"material_type_{domain.MaterialType.JUDICIAL_PRACTICE}"),
+        InlineKeyboardButton(text="Судебные практики", callback_data=f"noop"),
         InlineKeyboardButton(text="Кейсы", callback_data=f"material_type_{domain.MaterialType.CASE}"),
         InlineKeyboardButton(text="Советы", callback_data=f"material_type_{domain.MaterialType.ADVICE}"),
         InlineKeyboardButton(text="Назад", callback_data="back"),
