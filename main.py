@@ -76,7 +76,6 @@ async def main():
         await dp.start_polling(bot, allowed_updates=["any"])
     finally:
         await dp.storage.close()
-        await dp.storage.wait_closed()
         await bot.session.close()
 
 
