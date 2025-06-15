@@ -46,6 +46,7 @@ async def main():
         user=config.db.user,
         password=config.db.password,
         host=config.db.host,
+        port=config.db.port,
         name=config.db.name,
         echo=False,
     )

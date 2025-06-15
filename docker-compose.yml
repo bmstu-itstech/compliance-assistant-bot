@@ -1,34 +1,41 @@
 services:
-  compliance-assistant-bot:
-    container_name: compliance-assistant-bot
+  bot:
     build:
       context: .
       dockerfile: Dockerfile
-      network: host
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - host
-    depends_on:
-      compliance-assistant-db:
-        condition: service_healthy
-
-  compliance-assistant-db:
-    image: postgres:16.3-alpine3.20
-    container_name: compliance-assistant-db
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      DB_HOST: db
+      DB_PORT: 5432
+
+  db:
+    image: postgres:16.3-alpine3.20
     ports:
-      - "${DB_PORT}:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - host
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-postgres}" ]
       interval: 5s
       retries: 5
       start_period: 10s
       timeout: 10s
-    networks:
-      - host
 
 networks:
   host:
     driver: bridge
+
+volumes:
+  pg_data:
