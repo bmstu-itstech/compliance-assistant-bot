@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from dataclasses import dataclass
 
 from core import domain
@@ -10,7 +10,7 @@ class ThemeRecord:
     name: str
 
 
-class MaterialType(str, Enum):
+class MaterialType(StrEnum):
     LAW               = "law"
     JUDICIAL_PRACTICE = "judicial_practice"
     CASE              = "case"

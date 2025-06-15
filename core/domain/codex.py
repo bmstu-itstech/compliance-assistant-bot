@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Codex(str, Enum):
+class Codex(StrEnum):
     TAX   = "tax"               # налоговый
     LABOR = "labor"             # трудовой
