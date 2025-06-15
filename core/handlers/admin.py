@@ -1,3 +1,5 @@
+from sys import stderr
+
 import pandas as pd
 from aiogram import F, Router
 from aiogram.filters import Command
@@ -99,11 +101,13 @@ async def handle_uploaded_file(message: Message, store: Storage):
 
                 await store.create_material(material, themes)
 
-            except Exception as e:
-                await message.answer(f"Ошибка при обработке строки: {e}")
+            except Exception:
+                await message.answer(f"Ошибка при обработке строки")
                 continue
 
         await message.answer("Файл успешно обработан и данные сохранены")
 
     except Exception as e:
-        await message.answer(f"Произошла ошибка при обработке файла: {e}")
+        print(e, file=stderr)
+        await message.answer(f"Произошла ошибка при обработке файла")
+        raise e

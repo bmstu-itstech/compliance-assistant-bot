@@ -55,7 +55,7 @@ async def send_material_type(call, state):
     await state.set_state(HandleUser.material_type)
 
 
-def map_codex(codex: str) -> domain.Codex:
+def map_codex(codex: str) -> domain.Codex | None:
     if codex == domain.Codex.TAX.value:
         return domain.Codex.TAX
     elif codex == domain.Codex.LABOR.value:
@@ -82,7 +82,7 @@ async def send_search_format(call, state):
     )
 
 
-def map_material_type_to_domain(material_type: str) -> domain.MaterialType:
+def map_material_type_to_domain(material_type: str) -> domain.MaterialType | None:
     if material_type == domain.MaterialType.LAW.value:
         return domain.MaterialType.LAW
     elif material_type == domain.MaterialType.JUDICIAL_PRACTICE.value:
@@ -219,8 +219,8 @@ async def handle_material(call: CallbackQuery, store: Storage, state: FSMContext
 async def send_material(call, material):
     await call.message.answer(
         f"<i><b>\"{material.name}\"</b></i> "
-        f"({map_codex_to_str(material.codex)} кодекс) - {map_material_type_to_str(material.material_type)}\n\n"
-        f"<i>{material.description}</i>\n\n"
+        f"({map_codex_to_str(material.codex)} кодекс) - {map_material_type_to_str(material.material_type)}\n\n" +\
+        f"<i>{material.description}</i>\n\n" if material.description else ""
         f"{material.content}"
     )
 
@@ -238,7 +238,7 @@ async def back(call: CallbackQuery, state: FSMContext, store: Storage):
         await send_themes(call.message, state, store)
 
 
-def map_material_type_to_str(material_type: domain.MaterialType) -> str:
+def map_material_type_to_str(material_type: domain.MaterialType) -> str | None:
     if material_type == domain.MaterialType.LAW:
         return "законодательство"
     elif material_type == domain.MaterialType.JUDICIAL_PRACTICE:
@@ -249,7 +249,7 @@ def map_material_type_to_str(material_type: domain.MaterialType) -> str:
         return "совет"
 
 
-def map_codex_to_str(codex: domain.Codex) -> str:
+def map_codex_to_str(codex: domain.Codex) -> str | None:
     if codex == domain.Codex.LABOR:
         return "Трудовой"
     elif codex == domain.Codex.TAX:

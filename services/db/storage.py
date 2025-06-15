@@ -30,9 +30,11 @@ class Storage:
 
     async def create_material(self, material: domain.MaterialRecord, themes: list[domain.ThemeRecord]):
         new_material = models.Material.from_domain(material)
-        self._db.add(new_material)
         for theme in themes:
-            new_material.themes.append(models.Theme.from_domain(theme))
+            theme_model = models.Theme.from_domain(theme)
+            merged = await self._db.merge(theme_model)  # Если тема уже существует
+            new_material.themes.append(merged)
+        self._db.add(new_material)
         await self._db.commit()
         logger.info(f"add material with id {material.id}")
 

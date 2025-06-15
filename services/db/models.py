@@ -54,7 +54,7 @@ class Theme(BaseModel):
 
     @classmethod
     def from_domain(cls, theme: domain.ThemeRecord) -> "Theme":
-        return Theme(name=theme.name)
+        return Theme(id=theme.id, name=theme.name)
 
     def to_domain(self) -> domain.ThemeRecord:
         return domain.ThemeRecord(
