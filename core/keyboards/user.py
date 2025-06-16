@@ -24,6 +24,7 @@ def get_material_types_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     buttons = [
         InlineKeyboardButton(text="Законодательство", callback_data=f"material_type_{domain.MaterialType.LAW}"),
+        # Требование заказчика убрать :(
         #InlineKeyboardButton(text="Судебные практики", callback_data=f"material_type_{domain.MaterialType.JUDICIAL_PRACTICE}"),
         InlineKeyboardButton(text="Судебные практики", callback_data=f"noop"),
         InlineKeyboardButton(text="Новости", callback_data=f"material_type_{domain.MaterialType.NEWS}"),
@@ -39,7 +40,8 @@ def get_search_format_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     buttons = [
         InlineKeyboardButton(text="Из существующих", callback_data="search_format_exist"),
-        InlineKeyboardButton(text="Ручной ввод", callback_data="search_format_custom"),
+        # Требование заказчика убрать :(
+        #InlineKeyboardButton(text="Ручной ввод", callback_data="search_format_custom"),
         InlineKeyboardButton(text="Назад", callback_data="back"),
     ]
     builder.max_width = 1
