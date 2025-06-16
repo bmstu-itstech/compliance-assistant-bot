@@ -21,8 +21,8 @@ CODEX_MAPPING = {
 MATERIAL_TYPE_MAPPING = {
     "Закон": MaterialType.LAW,
     "Судебная практика": MaterialType.JUDICIAL_PRACTICE,
-    "Кейс": MaterialType.CASE,
-    "Совет": MaterialType.ADVICE
+    "Новости": MaterialType.NEWS,
+    "Рекомендации": MaterialType.ADVICE
 }
 
 
@@ -101,7 +101,8 @@ async def handle_uploaded_file(message: Message, store: Storage):
 
                 await store.create_material(material, themes)
 
-            except Exception:
+            except Exception as e:
+                print(e, file=stderr)
                 await message.answer(f"Ошибка при обработке строки")
                 continue
 

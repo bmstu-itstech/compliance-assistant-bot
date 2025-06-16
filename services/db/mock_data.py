@@ -51,7 +51,7 @@ MOCK_MATERIALS = [
         "name": "Дело № А40-12345/2023",
         "description": "Спор о взыскании задолженности по налогам",
         "codex": domain.Codex.TAX,
-        "type": domain.MaterialType.CASE,
+        "type": domain.MaterialType.NEWS,
         "content": "Компания оспаривала доначисление налоговым органом суммы в 2 млн рублей...",
         "themes": ["Налоговый учет", "Управление налоговыми рисками"]
     },
@@ -83,7 +83,7 @@ MOCK_MATERIALS = [
         "name": "Дело № 33-1234/2023",
         "description": "Спор о незаконном увольнении",
         "codex": domain.Codex.LABOR,
-        "type": domain.MaterialType.CASE,
+        "type": domain.MaterialType.NEWS,
         "content": "Суд восстановил на работе сотрудника, уволенного за однократное опоздание...",
         "themes": ["Трудовой распорядок. Дисциплина труда"]
     },
@@ -115,7 +115,7 @@ MOCK_MATERIALS = [
         "name": "Дело № А56-98765/2022",
         "description": "Оспаривание налоговых доначислений",
         "codex": domain.Codex.TAX,
-        "type": domain.MaterialType.CASE,
+        "type": domain.MaterialType.NEWS,
         "content": "Суд признал недействительным решение налогового органа о доначислении НДС...",
         "themes": ["Федеральные налоги"]
     },

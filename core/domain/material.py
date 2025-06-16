@@ -13,7 +13,7 @@ class ThemeRecord:
 class MaterialType(StrEnum):
     LAW               = "law"
     JUDICIAL_PRACTICE = "judicial_practice"
-    CASE              = "case"
+    NEWS              = "news"
     ADVICE            = "advice"
 
 

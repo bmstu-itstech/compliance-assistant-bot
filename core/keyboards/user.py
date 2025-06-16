@@ -26,8 +26,8 @@ def get_material_types_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="Законодательство", callback_data=f"material_type_{domain.MaterialType.LAW}"),
         #InlineKeyboardButton(text="Судебные практики", callback_data=f"material_type_{domain.MaterialType.JUDICIAL_PRACTICE}"),
         InlineKeyboardButton(text="Судебные практики", callback_data=f"noop"),
-        InlineKeyboardButton(text="Кейсы", callback_data=f"material_type_{domain.MaterialType.CASE}"),
-        InlineKeyboardButton(text="Советы", callback_data=f"material_type_{domain.MaterialType.ADVICE}"),
+        InlineKeyboardButton(text="Новости", callback_data=f"material_type_{domain.MaterialType.NEWS}"),
+        InlineKeyboardButton(text="Рекомендации", callback_data=f"material_type_{domain.MaterialType.ADVICE}"),
         InlineKeyboardButton(text="Назад", callback_data="back"),
     ]
     builder.add(*buttons)
@@ -57,8 +57,8 @@ def get_themes_keyboard(themes: list[tuple[int, str]], offset: int = 0) -> Inlin
     navigation_buttons = []
     if len(themes) > 10:
         navigation_buttons.extend([
-            InlineKeyboardButton(text="⬅️Предыдущая", callback_data="prev"),
-            InlineKeyboardButton(text="Следующая➡️", callback_data="next"),
+            InlineKeyboardButton(text="⬅️ Предыдущая", callback_data="prev"),
+            InlineKeyboardButton(text="Следующая ➡️", callback_data="next"),
         ])
     navigation_buttons.append(InlineKeyboardButton(text="Назад", callback_data="back"))
     builder.add(*navigation_buttons)

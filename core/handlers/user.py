@@ -87,8 +87,8 @@ def map_material_type_to_domain(material_type: str) -> domain.MaterialType | Non
         return domain.MaterialType.LAW
     elif material_type == domain.MaterialType.JUDICIAL_PRACTICE.value:
         return domain.MaterialType.JUDICIAL_PRACTICE
-    elif material_type == domain.MaterialType.CASE.value:
-        return domain.MaterialType.CASE
+    elif material_type == domain.MaterialType.NEWS.value:
+        return domain.MaterialType.NEWS
     elif material_type == domain.MaterialType.ADVICE.value:
         return domain.MaterialType.ADVICE
 
@@ -243,10 +243,10 @@ def map_material_type_to_str(material_type: domain.MaterialType) -> str | None:
         return "законодательство"
     elif material_type == domain.MaterialType.JUDICIAL_PRACTICE:
         return "судебная практика"
-    elif material_type == domain.MaterialType.CASE:
-        return "кейс"
+    elif material_type == domain.MaterialType.NEWS:
+        return "новости"
     elif material_type == domain.MaterialType.ADVICE:
-        return "совет"
+        return "рекомендации"
 
 
 def map_codex_to_str(codex: domain.Codex) -> str | None:
